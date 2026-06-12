@@ -244,14 +244,18 @@ if not st.session_state.initialized:
         st.error(f"OpenAI API error during initialization: {e}")
         st.stop()
 
-for msg in st.session_state.messages:
-    with st.chat_message(msg["role"]):
-        st.markdown(msg["content"])
+# Create a container for chat messages (scrollable)
+with st.container():
+    for msg in st.session_state.messages:
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
 
+# Chat input always appears at the bottom
 if summary_clicked:
     user_text = "Please provide the screening summary now."
 else:
     user_text = st.chat_input("Type your message…")
+
 
 if user_text:
     st.session_state.messages.append({"role": "user", "content": user_text})
