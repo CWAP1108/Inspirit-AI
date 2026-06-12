@@ -209,7 +209,21 @@ with col1:
         # Fully clear session state to avoid leftover keys
         for k in list(st.session_state.keys()):
             del st.session_state[k]
-        st.experimental_rerun()
+        # Try Streamlit's explicit rerun; fall back to raising RerunException or stop
+        if hasattr(st, "experimental_rerun"):
+            st.experimental_rerun()
+        else:
+            try:
+                from streamlit.runtime.scriptrunner.script_runner import RerunException
+            except Exception:
+                try:
+                    from streamlit.scriptrunner.script_runner import RerunException
+                except Exception:
+                    RerunException = None
+            if RerunException:
+                raise RerunException()
+            else:
+                st.stop()
 with col2:
     summary_clicked = st.button("Ask for summary", use_container_width=True)
 
