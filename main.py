@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 import streamlit as st
 from openai import OpenAI
+from streamlit_mic_recorder import mic_recorder
 import io
 
 load_dotenv()
@@ -252,33 +253,34 @@ with st.container():
             st.markdown(msg["content"])
 
 # Chat input always appears at the bottom
-col_input, col_audio = st.columns([3, 1])
+col_input, col_record = st.columns([4, 1])
 
 with col_input:
     user_text = st.chat_input("Type your message…")
 
-# Audio file upload and transcription
+# Voice recording button
 transcribed_text = None
-with col_audio:
-    audio_file = st.file_uploader(
-        "🎤 Upload audio",
-        type=["wav", "mp3", "m4a", "ogg"],
-        label_visibility="collapsed",
-        key="audio_upload"
+with col_record:
+    audio = mic_recorder(
+        start_prompt="🎤",
+        stop_prompt="⏹️",
+        just_once=False,
+        use_container_width=False,
+        key="audio_recorder",
     )
 
-if audio_file is not None:
+# Transcribe audio if recorded
+if audio is not None:
     with st.spinner("Transcribing audio…"):
         try:
-            # Read the audio file
-            audio_bytes = audio_file.read()
-            audio_file_obj = io.BytesIO(audio_bytes)
-            audio_file_obj.name = audio_file.name
+            # Convert audio bytes to file-like object
+            audio_file = io.BytesIO(audio["bytes"])
+            audio_file.name = "audio.wav"
             
             # Call OpenAI Whisper API
             transcript = client.audio.transcriptions.create(
                 model="whisper-1",
-                file=audio_file_obj,
+                file=audio_file,
             )
             transcribed_text = transcript.text
             st.success(f"✓ Transcribed: {transcribed_text}")
