@@ -251,10 +251,11 @@ with st.container():
             st.markdown(msg["content"])
 
 # Chat input always appears at the bottom
-if summary_clicked:
+user_text = st.chat_input("Type your message…")
+
+# Override with summary request if summary button was clicked
+if summary_clicked and not user_text:
     user_text = "Please provide the screening summary now."
-else:
-    user_text = st.chat_input("Type your message…")
 
 
 if user_text:
