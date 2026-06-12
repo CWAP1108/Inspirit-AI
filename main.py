@@ -2,7 +2,6 @@ import os
 from dotenv import load_dotenv
 import streamlit as st
 from openai import OpenAI
-from audio_recorder_streamlit import audio_recorder
 import io
 
 load_dotenv()
@@ -258,29 +257,34 @@ col_input, col_audio = st.columns([3, 1])
 with col_input:
     user_text = st.chat_input("Type your message…")
 
-with col_audio:
-    st.write("🎤")
-    audio_bytes = audio_recorder(text="Record", recording_color="#e74c3c", neutral_color="#95a5a6", icon_name="microphone")
-
-# Transcribe audio if recorded
+# Audio file upload and transcription
 transcribed_text = None
-if audio_bytes:
+with col_audio:
+    audio_file = st.file_uploader(
+        "🎤 Upload audio",
+        type=["wav", "mp3", "m4a", "ogg"],
+        label_visibility="collapsed",
+        key="audio_upload"
+    )
+
+if audio_file is not None:
     with st.spinner("Transcribing audio…"):
         try:
-            # Convert audio bytes to file-like object for Whisper API
-            audio_file = io.BytesIO(audio_bytes)
-            audio_file.name = "audio.wav"
+            # Read the audio file
+            audio_bytes = audio_file.read()
+            audio_file_obj = io.BytesIO(audio_bytes)
+            audio_file_obj.name = audio_file.name
             
             # Call OpenAI Whisper API
             transcript = client.audio.transcriptions.create(
                 model="whisper-1",
-                file=audio_file,
+                file=audio_file_obj,
             )
             transcribed_text = transcript.text
-            st.success(f"Transcribed: {transcribed_text}")
+            st.success(f"✓ Transcribed: {transcribed_text}")
             
             # Automatically use transcribed text if no text input
-            if not user_text:
+            if not user_text and transcribed_text:
                 user_text = transcribed_text
         except Exception as e:
             st.error(f"Transcription error: {e}")
