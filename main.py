@@ -206,9 +206,9 @@ if "initialized" not in st.session_state:
 col1, col2 = st.columns([1, 1])
 with col1:
     if st.button("Reset", use_container_width=True):
-        st.session_state.messages = []
-        st.session_state.previous_response_id = None
-        st.session_state.initialized = False
+        # Fully clear session state to avoid leftover keys
+        for k in list(st.session_state.keys()):
+            del st.session_state[k]
         st.experimental_rerun()
 with col2:
     summary_clicked = st.button("Ask for summary", use_container_width=True)
@@ -247,11 +247,15 @@ if user_text:
     with st.chat_message("assistant"):
         with st.spinner("Thinking…"):
             try:
-                resp = client.responses.create(
-                    model=MODEL,
-                    previous_response_id=st.session_state.previous_response_id,
-                    input=[{"role": "user", "content": user_text}],
-                )
+                create_kwargs = {
+                    "model": MODEL,
+                    "input": [{"role": "user", "content": user_text}],
+                }
+                prev = st.session_state.get("previous_response_id")
+                if prev:
+                    create_kwargs["previous_response_id"] = prev
+
+                resp = client.responses.create(**create_kwargs)
                 st.session_state.previous_response_id = resp.id
                 assistant_text = resp.output_text
             except Exception as e:
