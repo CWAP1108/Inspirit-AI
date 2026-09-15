@@ -10,7 +10,9 @@
     "format": "oxfmt ."
   },
   "dependencies": {
+    "dotenv": "^16.4.5",
     "hono": "^4.0.0",
+    "openai": "^4.0.0",
     "postgres": "^3.0.0"
   },
   "devDependencies": {
