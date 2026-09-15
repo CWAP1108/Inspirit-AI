@@ -1,0 +1,13 @@
+{
+  "name": "inspirit-ai-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace frontend",
+    "dev:backend": "npm run dev --workspace backend"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "inspirit-ai-backend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "start": "bun run src/index.ts",
+    "lint": "oxlint .",
+    "format": "oxfmt ."
+  },
+  "dependencies": {
+    "hono": "^4.0.0",
+    "postgres": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.0.0",
+    "oxfmt": "^0.16.0",
+    "oxlint": "^0.16.0",
+    "typescript": "^6.0.0"
+  }
+}

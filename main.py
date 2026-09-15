@@ -14,7 +14,7 @@ if not OPENAI_API_KEY:
     st.error("Missing OPENAI_API_KEY. Add it to Streamlit Cloud secrets, a local .env file, or Streamlit Secrets.")
     st.stop()
 
-MODEL = os.getenv("OPENAI_MODEL", "gpt-5.1-chat-latest")
+MODEL = os.getenv("OPENAI_MODEL", "gpt-5.6-terra")
 SYSTEM_PROMPT = os.getenv("SYSTEM_PROMPT", "").strip()
 if not SYSTEM_PROMPT:
     SYSTEM_PROMPT = """

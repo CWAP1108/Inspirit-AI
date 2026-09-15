@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: inspirit-ai-db
+    environment:
+      POSTGRES_DB: inspirit
+      POSTGRES_USER: inspirit
+      POSTGRES_PASSWORD: inspirit
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    image: oven/bun:1.1.25
+    working_dir: /app
+    command: sh -c "bun install && bun run dev"
+    volumes:
+      - ./backend:/app
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: postgres://inspirit:inspirit@db:5432/inspirit
+    depends_on:
+      - db
+
+  frontend:
+    image: node:22-alpine
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    volumes:
+      - ./frontend:/app
+    ports:
+      - '5173:5173'
+
+volumes:
+  postgres_data:
