@@ -14,6 +14,9 @@ type ChatMessage = {
   content: string;
 };
 
+const CHAT_API_URL =
+  import.meta.env.VITE_CHAT_API_URL || 'https://inspirit-ai.calebwuap.workers.dev/api/chat';
+
 const starterMessages: ChatMessage[] = [
   {
     role: 'assistant',
@@ -44,7 +47,7 @@ function HomePage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('https://worker-shrill-wood-4108.calebwuap.workers.dev/api/chat', {
+      const response = await fetch(CHAT_API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: nextMessages }),
