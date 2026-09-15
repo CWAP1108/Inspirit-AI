@@ -1,10 +1,24 @@
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Max-Age': '86400',
+};
+
 export default {
   async fetch(request, env) {
+    if (request.method === 'OPTIONS') {
+      return new Response(null, {
+        status: 204,
+        headers: corsHeaders,
+      });
+    }
+
     if (request.method !== 'POST') {
       return new Response(JSON.stringify({ ok: true }), {
         headers: {
           'content-type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
+          ...corsHeaders,
         },
       });
     }
@@ -56,7 +70,7 @@ export default {
       return new Response(JSON.stringify({ reply }), {
         headers: {
           'content-type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
+          ...corsHeaders,
         },
       });
     } catch (error) {
@@ -68,7 +82,7 @@ export default {
           status: 500,
           headers: {
             'content-type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
+            ...corsHeaders,
           },
         },
       );
