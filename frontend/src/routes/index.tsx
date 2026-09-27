@@ -15,7 +15,7 @@ type ChatMessage = {
 };
 
 const CHAT_API_URL =
-  import.meta.env.VITE_CHAT_API_URL || 'https://inspirit-ai.calebwuap.workers.dev/api/chat';
+  import.meta.env.VITE_CHAT_API_URL || 'https://worker-shrill-wood-4108.calebwuap.workers.dev/api/chat';
 
 const starterMessages: ChatMessage[] = [
   {

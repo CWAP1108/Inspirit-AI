@@ -5,6 +5,27 @@ const corsHeaders = {
   'Access-Control-Max-Age': '86400',
 };
 
+function extractAssistantText(response) {
+  if (typeof response?.output_text === 'string' && response.output_text.trim()) {
+    return response.output_text.trim();
+  }
+
+  const blocks = [];
+  for (const item of response?.output ?? []) {
+    const contents = item?.content ?? [];
+    for (const block of contents) {
+      if (typeof block?.text === 'string' && block.text.trim()) {
+        blocks.push(block.text.trim());
+      }
+      if (typeof block?.output_text === 'string' && block.output_text.trim()) {
+        blocks.push(block.output_text.trim());
+      }
+    }
+  }
+
+  return blocks.join('\n\n').trim() || 'I am here with you. What has been weighing on you lately?';
+}
+
 export default {
   async fetch(request, env) {
     if (request.method === 'OPTIONS') {
@@ -61,11 +82,7 @@ export default {
       });
 
       const data = await response.json();
-
-      const reply =
-        data.output_text ||
-        data.output?.[0]?.content?.[0]?.text ||
-        'I am here with you. What has been weighing on you lately?';
+      const reply = extractAssistantText(data);
 
       return new Response(JSON.stringify({ reply }), {
         headers: {
